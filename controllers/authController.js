@@ -24,20 +24,21 @@ const handleLogin = async (req, res) => {
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '30s' }
         );
+
         const refreshToken = jwt.sign(
             { "username": foundUser.username },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
 
-        //Saving refrech token with current user
+        //Saving refresh token with current user
         foundUser.refreshToken = refreshToken;
         const result = await foundUser.save();
         console.log(result);
         console.log(roles);
 
         res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
-        res.json({ roles, accessToken });
+        res.json({ accessToken });
     } else {
         res.sendStatus(401);
     }
